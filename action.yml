@@ -1,0 +1,23 @@
+# action.yml
+name: 'Qovery deploy'
+description: 'Deploy on your Qovery projects'
+inputs:
+  qovery-organization-id:
+    description: 'Qovery organization ID'
+    required: true
+  qovery-environment-id:
+    description: 'Qovery environment ID'
+    required: true
+  qovery-application-id:
+    description: 'Qovery application ID'
+    required: true
+outputs:
+  environment-state:
+    description: 'Environment state on which app has been deployed'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.qovery-organization-id }}
+    - ${{ inputs.qovery-environment-id }}
+    - ${{ inputs.qovery-application-id }}
