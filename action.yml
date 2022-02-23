@@ -1,6 +1,12 @@
 # action.yml
 name: 'Qovery deploy'
 description: 'Deploy on your Qovery projects'
+author: Qovery <support@qovery.com>
+
+branding:
+  icon: "upload-cloud"
+  color: "purple"
+
 inputs:
   qovery-organization-id:
     description: 'Qovery organization ID'
