@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Qovery/qovery-github-action/github-action/pkg"
+	"github-action/pkg"
 )
 
 func DeployApplication(qoveryAPIToken string, qoveryApplicationID string, qoveryEnvironmentID string, applicationCommitID string) error {
