@@ -12,7 +12,7 @@ func main() {
 	// qoveryOrganizationID := os.Getenv("QOVERY_ORGANIZATION_ID")
 	qoveryEnvironmentID := os.Getenv("INPUT_QOVERY_ENVIRONMENT_ID")
 	qoveryApplicationID := os.Getenv("INPUT_QOVERY_APPLICATION_ID")
-	qoveryAPIToken := os.Getenv("QOVERY_API_TOKEN")
+	qoveryAPIToken := os.Args[4] // <= Seems secret doesn't want to be fetched otherwise
 
 	fmt.Printf("Qovery deployment starting for commit: %s ...\n", applicationCommitID)
 

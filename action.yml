@@ -17,6 +17,9 @@ inputs:
   qovery-application-id:
     description: 'Qovery application ID'
     required: true
+  qovery-api-token:
+    description: 'Qovery API token'
+    required: true
 outputs:
   environment-state:
     description: 'Environment state on which app has been deployed'
@@ -27,3 +30,4 @@ runs:
     - ${{ inputs.qovery-organization-id }}
     - ${{ inputs.qovery-environment-id }}
     - ${{ inputs.qovery-application-id }}
+    - ${{ inputs.qovery-api-token }}
