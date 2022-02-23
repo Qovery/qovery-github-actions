@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Qovery/qovery-github-action/app"
+	"github.com/Qovery/qovery-github-action/github-action/app"
 )
 
 func main() {
