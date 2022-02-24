@@ -37,14 +37,13 @@ jobs:
     name: Deploy on Qovery
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Deploy on Qovery
         uses: Qovery/qovery-action@main
         id: qovery
-        env:
-          QOVERY_API_TOKEN: ${{ secrets.QOVERY_API_TOKEN }}
         with:
           qovery-organization-id: [YOUR_QOVERY_ORGANIZATION_ID]
           qovery-environment-id: [APPLICATION_QOVERY_ENVIRONMENT_ID]
           qovery-application-id: [APPLICATION_QOVERY_APPLICATION_ID]
+          qovery-api-token: ${{secrets.QOVERY_API_TOKEN}}
 ```
