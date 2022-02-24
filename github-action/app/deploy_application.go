@@ -10,6 +10,7 @@ import (
 )
 
 func DeployApplication(qoveryAPIToken string, qoveryApplicationID string, qoveryEnvironmentID string, applicationCommitID string) error {
+
 	qoveryAPIClient := pkg.NewQoveryAPIClient(
 		&http.Client{},
 		"https://api.qovery.com",

@@ -9,10 +9,10 @@ import (
 
 func main() {
 	applicationCommitID := os.Getenv("GITHUB_SHA")
-	// qoveryOrganizationID := os.Getenv("QOVERY_ORGANIZATION_ID")
-	qoveryEnvironmentID := os.Getenv("INPUT_QOVERY_ENVIRONMENT_ID")
-	qoveryApplicationID := os.Getenv("INPUT_QOVERY_APPLICATION_ID")
-	qoveryAPIToken := os.Args[4] // <= Seems secret doesn't want to be fetched otherwise
+	// qoveryOrganizationID := os.Args[1]
+	qoveryEnvironmentID := os.Args[2]
+	qoveryApplicationID := os.Args[3]
+	qoveryAPIToken := os.Args[4]
 
 	fmt.Printf("Qovery deployment starting for commit: %s ...\n", applicationCommitID)
 
