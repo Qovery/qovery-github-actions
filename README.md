@@ -1,16 +1,18 @@
-# [Qovery](https://www.qovery.com/) GitHub Action
-<h3 align="center">The simplest way to deploy your apps in the Cloud</h3>
+<p align="center">
+    <img src="https://raw.githubusercontent.com/Qovery/public-resources/master/qovery%20logo%20horizontal%20without%20margin.png" alt="Qovery logo" />
+</p>
+
 <p align="center">Deploy your apps on any Cloud providers in just a few seconds ⚡</p>
 
 <p align="center">
 <img src="https://github.com/Qovery/qovery-github-action/actions/workflows/test.yml/badge.svg?style=flat-square" alt="Tests">
 </p>
 
+<h3 align="center">The simplest way to deploy your apps in the Cloud</h3>
+
 <br />
 
-<p align="center">
-    <img src="https://raw.githubusercontent.com/Qovery/public-resources/master/qovery_kubernetes_cloudproviders.svg" height="450px" alt="Qovery stack on top of Kubernetes and Cloud providers" />
-</p>
+# [Qovery](https://www.qovery.com/) GitHub Action
 
 **Qovery Github Action** is a Github Action plugin allowing Qovery users to integrate Qovery within their CI nicely.
 
