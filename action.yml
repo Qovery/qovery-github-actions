@@ -31,4 +31,3 @@ runs:
     - ${{ inputs.qovery-environment-id }}
     - ${{ inputs.qovery-application-id }}
     - ${{ inputs.qovery-api-token }}
-    - ${{ github.sha }}
