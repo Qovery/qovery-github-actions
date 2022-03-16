@@ -93,7 +93,7 @@ func (a qoveryAPIClient) DeployApplication(application Application) error {
 	jsonValue, _ := json.Marshal(values)
 
 	req, err := http.NewRequest("POST", a.baseURL+"/application/"+application.ID+"/deploy", bytes.NewBuffer(jsonValue))
-	req.Header.Set("Authorization", "Bearer "+a.apiToken)
+	req.Header.Set("Authorization", "Token "+a.apiToken)
 	req.Header.Set("Content-Type", "application/json")
 	if err != nil {
 		return err
@@ -115,7 +115,7 @@ func (a qoveryAPIClient) DeployApplication(application Application) error {
 
 func (a qoveryAPIClient) GetEnvironmentStatus(environmentID string) (*EnvironmentStatus, error) {
 	req, err := http.NewRequest("GET", a.baseURL+"/environment/"+environmentID+"/status", nil)
-	req.Header.Set("Authorization", "Bearer "+a.apiToken)
+	req.Header.Set("Authorization", "Token "+a.apiToken)
 	req.Header.Set("Content-Type", "application/json")
 	if err != nil {
 		return nil, err
