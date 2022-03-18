@@ -46,6 +46,6 @@ jobs:
         with:
           qovery-organization-id: [YOUR_QOVERY_ORGANIZATION_ID]
           qovery-environment-id: [APPLICATION_QOVERY_ENVIRONMENT_ID]
-          qovery-application-id: [APPLICATION_QOVERY_APPLICATION_ID]
+          qovery-application-ids: [APPLICATION_QOVERY_APPLICATION_ID1,APPLICATION_QOVERY_APPLICATION_ID2] # Comma-separated string of IDs
           qovery-api-token: ${{secrets.QOVERY_API_TOKEN}}
 ```
