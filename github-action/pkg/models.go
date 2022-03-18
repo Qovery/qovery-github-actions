@@ -1,6 +1,6 @@
 package pkg
 
-type Application struct {
-	ID       string
+type Applications struct {
+	IDS       string
 	CommitID string
 }
