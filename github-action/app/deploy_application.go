@@ -9,7 +9,7 @@ import (
 	"github-action/pkg"
 )
 
-func DeployApplication(qoveryAPIToken string, qoveryApplicationID string, qoveryEnvironmentID string, applicationCommitID string) error {
+func DeployApplication(qoveryAPIToken string, qoveryApplicationIDS string, qoveryEnvironmentID string, applicationCommitID string) error {
 	qoveryAPIClient := pkg.NewQoveryAPIClient(
 		&http.Client{},
 		"https://api.qovery.com",
@@ -52,7 +52,7 @@ func DeployApplication(qoveryAPIToken string, qoveryApplicationID string, qovery
 	}
 
 	// Launching deployment
-	err := qoveryAPIClient.DeployApplication(pkg.Application{ID: qoveryApplicationID, CommitID: applicationCommitID})
+	err := qoveryAPIClient.DeployApplications(qoveryEnvironmentID, pkg.Applications{IDS: qoveryApplicationIDS, CommitID: applicationCommitID})
 	if err != nil {
 		return fmt.Errorf("error while trying to deploy application: %s", err)
 	}

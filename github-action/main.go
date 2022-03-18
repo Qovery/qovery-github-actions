@@ -14,7 +14,7 @@ var (
 
 	qoveryOrganizationID = kingpin.Arg("qovery-org-id", "Qovery organization ID").Required().String()
 	qoveryEnvironmentID  = kingpin.Arg("qovery-env-id", "Qovery environment ID").Required().String()
-	qoveryApplicationID  = kingpin.Arg("qovery-app-id", "Qovery application ID").Required().String()
+	qoveryApplicationIDS = kingpin.Arg("qovery-app-id", "Qovery application ID").Required().String()
 	qoveryAPIToken       = kingpin.Arg("qovery-api-token", "Qovery API token").Required().String()
 	applicationCommitID  = kingpin.Arg("application-commit-id", "Application commit ID").String()
 )
@@ -35,7 +35,7 @@ func main() {
 
 	fmt.Printf("Qovery deployment starting for commit: %s ...\n", *applicationCommitID)
 
-	err := app.DeployApplication(*qoveryAPIToken, *qoveryApplicationID, *qoveryEnvironmentID, *applicationCommitID)
+	err := app.DeployApplication(*qoveryAPIToken, *qoveryApplicationIDS, *qoveryEnvironmentID, *applicationCommitID)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

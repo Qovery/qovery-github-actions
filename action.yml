@@ -14,8 +14,8 @@ inputs:
   qovery-environment-id:
     description: 'Qovery environment ID'
     required: true
-  qovery-application-id:
-    description: 'Qovery application ID'
+  qovery-application-ids:
+    description: 'Qovery applications IDS'
     required: true
   qovery-api-token:
     description: 'Qovery API token'
@@ -29,5 +29,5 @@ runs:
   args:
     - ${{ inputs.qovery-organization-id }}
     - ${{ inputs.qovery-environment-id }}
-    - ${{ inputs.qovery-application-id }}
+    - ${{ inputs.qovery-application-ids }}
     - ${{ inputs.qovery-api-token }}
