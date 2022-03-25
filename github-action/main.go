@@ -2,40 +2,62 @@ package main
 
 import (
 	"fmt"
+	"github-action/pkg"
+	"github-action/qovery"
+	"net/http"
 	"os"
 
 	"gopkg.in/alecthomas/kingpin.v2"
-
-	"github-action/app"
 )
 
 var (
-	application = kingpin.New("Qovery deploy", "A command-line allowing to deploy Qovery application.")
-
-	qoveryOrganizationID = kingpin.Arg("qovery-org-id", "Qovery organization ID").Required().String()
-	qoveryEnvironmentID  = kingpin.Arg("qovery-env-id", "Qovery environment ID").Required().String()
-	qoveryApplicationIDS = kingpin.Arg("qovery-app-id", "Qovery application ID").Required().String()
-	qoveryAPIToken       = kingpin.Arg("qovery-api-token", "Qovery API token").Required().String()
-	applicationCommitID  = kingpin.Arg("application-commit-id", "Application commit ID").String()
+	kp                  = kingpin.New("Qovery deploy", "A command-line allowing to deploy Qovery application.")
+	organizationId      = kingpin.Flag("org-id", "Qovery organization ID").Required().String()
+	environmentId       = kingpin.Flag("env-id", "Qovery environment ID").Required().String()
+	applicationIds      = kingpin.Flag("app-ids", "Qovery application ID").String()
+	applicationCommitId = kingpin.Flag("app-commit-id", "Application commit ID").String()
+	databaseId          = kingpin.Flag("db-id", "Qovery database ID").String()
+	apiToken            = kingpin.Flag("api-token", "Qovery API token").Required().String()
 )
 
 func main() {
 	kingpin.Parse()
 
 	envCommitID := ""
-	if applicationCommitID == nil || *applicationCommitID == "" {
+	if applicationCommitId == nil || *applicationCommitId == "" {
 		envCommitID = os.Getenv("GITHUB_SHA")
-		applicationCommitID = &envCommitID
+		applicationCommitId = &envCommitID
 	}
 
-	if applicationCommitID == nil || *applicationCommitID == "" {
-		fmt.Println("error: commit ID shouldn't be empty: `application-commit-id` to be set in args or `GITHUB_SHA` env var to be set.")
+	deployApp := applicationIds != nil && *applicationIds != ""
+	deployDb := databaseId != nil && *databaseId != ""
+
+	if deployApp && (applicationCommitId == nil || *applicationCommitId == "") {
+		fmt.Println("error: commit ID shouldn't be empty: `app-commit-id` to be set in args or `GITHUB_SHA` env var to be set.")
 		os.Exit(1)
 	}
 
-	fmt.Printf("Qovery deployment starting for commit: %s ...\n", *applicationCommitID)
+	if !deployApp && !deployDb {
+		fmt.Println("error: 'app-ids' or 'db-id' property must be defined.")
+		os.Exit(1)
+	}
 
-	err := app.DeployApplication(*qoveryAPIToken, *qoveryApplicationIDS, *qoveryEnvironmentID, *applicationCommitID)
+	qoveryAPIClient := pkg.NewQoveryAPIClient(
+		&http.Client{},
+		"https://api.qovery.com",
+		*apiToken,
+		0,
+	)
+
+	var err error = nil
+	if deployApp {
+		fmt.Printf("Qovery application(s) '%s' deployment starting with commit: %s ...\n", *applicationIds, *applicationCommitId)
+		err = qovery.DeployApplication(qoveryAPIClient, *applicationIds, *environmentId, *applicationCommitId)
+	} else if deployDb {
+		fmt.Printf("Qovery database '%s' deployment starting...\n", *databaseId)
+		err = qovery.DeployDatabase(qoveryAPIClient, *databaseId, *environmentId)
+	}
+
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

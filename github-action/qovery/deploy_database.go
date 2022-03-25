@@ -1,30 +1,22 @@
-package app
+package qovery
 
 import (
 	"fmt"
-	"net/http"
 	"strings"
 	"time"
 
 	"github-action/pkg"
 )
 
-func DeployApplication(qoveryAPIToken string, qoveryApplicationIDS string, qoveryEnvironmentID string, applicationCommitID string) error {
-	qoveryAPIClient := pkg.NewQoveryAPIClient(
-		&http.Client{},
-		"https://api.qovery.com",
-		qoveryAPIToken,
-		0,
-	)
-
-	timeout := time.Second * 900 // 15 minutes
+func DeployDatabase(qoveryAPIClient pkg.QoveryAPIClient, databaseId string, qoveryEnvironmentId string) error {
+	timeout := time.Second * 1800 // 30 minutes
 
 	// Checking deployment is not QUEUED or DEPLOYING already
 	// if so, wait for it to be ready
-	state_is_ok := false
+	stateIsOk := false
 	var status *pkg.EnvironmentStatus
 	for start := time.Now(); time.Since(start) < timeout; {
-		status, err := qoveryAPIClient.GetEnvironmentStatus(qoveryEnvironmentID)
+		status, err := qoveryAPIClient.GetEnvironmentStatus(qoveryEnvironmentId)
 		if err != nil {
 			return fmt.Errorf("error while trying to get environment status: %s", err)
 		}
@@ -37,7 +29,7 @@ func DeployApplication(qoveryAPIToken string, qoveryApplicationIDS string, qover
 			status.State == pkg.EnvStatusCancelError ||
 			status.State == pkg.EnvStatusCancelled ||
 			status.State == pkg.EnvStatusUnknown {
-			state_is_ok = true
+			stateIsOk = true
 			break
 		}
 
@@ -46,20 +38,20 @@ func DeployApplication(qoveryAPIToken string, qoveryApplicationIDS string, qover
 		time.Sleep(10 * time.Second)
 	}
 
-	// Environment state is not valid even after timeout, cannot deploy the application
-	if !state_is_ok {
-		return fmt.Errorf("error: application cannot be deployed, environment status is : %s", status.State)
+	// Environment state is not valid even after timeout, cannot deploy the database
+	if !stateIsOk {
+		return fmt.Errorf("error: database cannot be deployed, environment status is : %s", status.State)
 	}
 
 	// Launching deployment
-	err := qoveryAPIClient.DeployApplications(qoveryEnvironmentID, pkg.Applications{IDS: qoveryApplicationIDS, CommitID: applicationCommitID})
+	err := qoveryAPIClient.DeployDatabase(pkg.Database{ID: databaseId})
 	if err != nil {
-		return fmt.Errorf("error while trying to deploy application: %s", err)
+		return fmt.Errorf("error while trying to deploy database: %s", err)
 	}
 
 	// Waiting for deployment to be OK or ERRORED with a timeout
 	for start := time.Now(); time.Since(start) < timeout; {
-		status, err := qoveryAPIClient.GetEnvironmentStatus(qoveryEnvironmentID)
+		status, err := qoveryAPIClient.GetEnvironmentStatus(qoveryEnvironmentId)
 		if err != nil {
 			return fmt.Errorf("error while trying to get environment status: %s", err)
 		}
@@ -69,7 +61,7 @@ func DeployApplication(qoveryAPIToken string, qoveryApplicationIDS string, qover
 		if status.State == pkg.EnvStatusRunning {
 			break
 		} else if strings.HasSuffix(string(status.State), "ERROR") {
-			return fmt.Errorf("error: application has not been deployed, environment status is : %s", status.State)
+			return fmt.Errorf("error: database has not been deployed, environment status is : %s", status.State)
 		}
 
 		time.Sleep(10 * time.Second)

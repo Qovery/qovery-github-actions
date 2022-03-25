@@ -12,14 +12,14 @@
 
 <br />
 
-# [Qovery](https://www.qovery.com/) GitHub Action
+# [Qovery](https://www.qovery.com/) GitHub Actions
 
-**Qovery Github Action** is a Github Action plugin allowing Qovery users to integrate Qovery within their CI nicely.
+**Qovery GitHub Actions** is a GitHub Actions plugin allowing Qovery users to integrate Qovery within their CI nicely.
 
 - Website: https://www.qovery.com
 - Qovery documentation: https://hub.qovery.com/docs
 
-**Please note**: We take Qovery's security and our users' trust very seriously. If you believe you have found a security issue in Qovery, please responsibly disclose by contacting us at security@qovery.com.
+**Please note**: We take Qovery security and our users' trust very seriously. If you believe you have found a security issue in Qovery, please responsibly disclose by contacting us at security@qovery.com.
 
 ## ✅ Requirements
 - A **Qovery** account. [Sign up now](https://start.qovery.com/) if you don't have any account yet.
@@ -29,7 +29,10 @@
 - Setup a secret named `QOVERY_API_TOKEN` within your repository `Secrets` section and set its value with output of the previous step.
 
 ## 🔌 Usage
-- Add a new job to your Github workflow (e.q. adding a step after your `tests`) using `Qovery/qovery-action` action.
+- Add a new job to your GitHub workflow (e.q. adding a step after your `tests`) using `Qovery/qovery-action` action.
+
+### Deploy your application
+
 ```
 on: [push]
 
@@ -47,5 +50,27 @@ jobs:
           qovery-organization-id: [YOUR_QOVERY_ORGANIZATION_ID]
           qovery-environment-id: [APPLICATION_QOVERY_ENVIRONMENT_ID]
           qovery-application-ids: [APPLICATION_QOVERY_APPLICATION_ID1,APPLICATION_QOVERY_APPLICATION_ID2] # Comma-separated string of IDs
+          qovery-api-token: ${{secrets.QOVERY_API_TOKEN}}
+```
+
+### Deploy a database
+
+```
+on: [push]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy on Qovery
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Deploy on Qovery
+        uses: Qovery/qovery-action@main
+        id: qovery
+        with:
+          qovery-organization-id: [YOUR_QOVERY_ORGANIZATION_ID]
+          qovery-environment-id: [APPLICATION_QOVERY_ENVIRONMENT_ID]
+          qovery-database-id: [APPLICATION_QOVERY_DATABASE_ID]
           qovery-api-token: ${{secrets.QOVERY_API_TOKEN}}
 ```

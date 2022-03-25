@@ -70,6 +70,7 @@ type HTTPClient interface {
 
 type QoveryAPIClient interface {
 	DeployApplications(environmentId string, applications Applications) error
+	DeployDatabase(database Database) error
 	GetEnvironmentStatus(environmentID string) (*EnvironmentStatus, error)
 }
 
@@ -92,18 +93,42 @@ func NewQoveryAPIClient(c HTTPClient, baseURL string, apiToken string, timeout t
 func (a qoveryAPIClient) DeployApplications(environmentId string, applications Applications) error {
 	appIds := strings.Split(applications.IDS, ",")
 	values := make([]map[string]string, 0, len(appIds))
-	
-	for _, appId := range(appIds) {
-		values = append(values, map[string]string{"git_commit_id": applications.CommitID, "application_id": appId })
+
+	for _, appId := range appIds {
+		values = append(values, map[string]string{"git_commit_id": applications.CommitID, "application_id": appId})
 	}
 
-	jsonValue, _ := json.Marshal(map[string]interface{} {"applications": values})
+	jsonValue, _ := json.Marshal(map[string]interface{}{"applications": values})
 
-	req, err := http.NewRequest("POST", a.baseURL+"/environment/"+ environmentId +"/application/deploy", bytes.NewBuffer(jsonValue))
-	
+	req, err := http.NewRequest("POST", a.baseURL+"/environment/"+environmentId+"/application/deploy", bytes.NewBuffer(jsonValue))
+
 	req.Header.Set("Authorization", "Token "+a.apiToken)
 	req.Header.Set("Content-Type", "application/json")
-	
+
+	if err != nil {
+		return err
+	}
+
+	resp, err := a.c.Do(req)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	switch resp.StatusCode {
+	case 200:
+		return nil // deployment launched
+	default:
+		return fmt.Errorf("qovery API error, status code: %s", resp.Status)
+	}
+}
+
+func (a qoveryAPIClient) DeployDatabase(database Database) error {
+	req, err := http.NewRequest("POST", a.baseURL+"/database/"+database.ID+"/deploy", nil)
+
+	req.Header.Set("Authorization", "Token "+a.apiToken)
+	req.Header.Set("Content-Type", "application/json")
+
 	if err != nil {
 		return err
 	}

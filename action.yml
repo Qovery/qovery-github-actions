@@ -8,6 +8,9 @@ branding:
   color: "purple"
 
 inputs:
+  qovery-api-token:
+    description: 'Qovery API token'
+    required: true
   qovery-organization-id:
     description: 'Qovery organization ID'
     required: true
@@ -16,10 +19,10 @@ inputs:
     required: true
   qovery-application-ids:
     description: 'Qovery applications IDS'
-    required: true
-  qovery-api-token:
-    description: 'Qovery API token'
-    required: true
+    required: false
+  qovery-database-id:
+    description: 'Qovery database ID'
+    required: false
 outputs:
   environment-state:
     description: 'Environment state on which app has been deployed'
@@ -27,7 +30,9 @@ runs:
   using: 'docker'
   image: 'Dockerfile'
   args:
-    - ${{ inputs.qovery-organization-id }}
-    - ${{ inputs.qovery-environment-id }}
-    - ${{ inputs.qovery-application-ids }}
-    - ${{ inputs.qovery-api-token }}
+    - --org-id=${{ inputs.qovery-organization-id }}
+    - --env-id=${{ inputs.qovery-environment-id }}
+    - --app-ids=${{ inputs.qovery-application-ids }}
+    - --app-commit-id=${{ inputs.qovery-application-ids }}
+    - --db-id=${{ inputs.qovery-database-id }}
+    - --api-token=${{ inputs.qovery-api-token }}

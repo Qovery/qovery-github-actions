@@ -1,6 +1,10 @@
 package pkg
 
 type Applications struct {
-	IDS       string
+	IDS      string
 	CommitID string
+}
+
+type Database struct {
+	ID string
 }
