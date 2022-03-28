@@ -53,6 +53,8 @@ jobs:
           qovery-api-token: ${{secrets.QOVERY_API_TOKEN}}
 ```
 
+> ⚠️ When passing several applications IDs, make sure all those applications are part of the GitHub repository the action will be running on. For applications in separate repositories, add a separate workflow in the relevant repo.
+
 ### Deploy a database
 
 ```
