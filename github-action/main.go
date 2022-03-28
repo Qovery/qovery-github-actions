@@ -73,7 +73,7 @@ func getApplicationIds(qoveryAPIClient pkg.QoveryAPIClient, envId string, id *st
 		var ids []string
 		for _, sName := range strings.Split(*name, ",") {
 			id, err := qovery.GetApplicationIdByName(qoveryAPIClient, envId, sName)
-			catchError(err)
+			handleError(err)
 
 			ids = append(ids, id)
 		}
@@ -96,7 +96,7 @@ func getDatabaseId(qoveryAPIClient pkg.QoveryAPIClient, envId string, id *string
 	return "", errors.New("'db-id' or 'db-name' property must be defined")
 }
 
-func catchError(err error) {
+func handleError(err error) {
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -133,28 +133,28 @@ func main() {
 	)
 
 	organizationId, err := getOrganizationId(qoveryAPIClient, organizationId, organizationName)
-	catchError(err)
+	handleError(err)
 
 	projectId, err := getProjectId(qoveryAPIClient, organizationId, projectId, projectName)
-	catchError(err)
+	handleError(err)
 
 	environmentId, err := getEnvironmentId(qoveryAPIClient, projectId, environmentId, environmentName)
-	catchError(err)
+	handleError(err)
 
 	if deployApp {
 		applicationIds, err := getApplicationIds(qoveryAPIClient, environmentId, applicationIds, applicationNames)
-		catchError(err)
+		handleError(err)
 
 		fmt.Printf("Qovery application(s) '%s' deployment starting with commit: %s ...\n", applicationIds, *applicationCommitId)
 		err = qovery.DeployApplication(qoveryAPIClient, applicationIds, environmentId, *applicationCommitId)
-		catchError(err)
+		handleError(err)
 	} else if deployDb {
 		databaseId, err := getDatabaseId(qoveryAPIClient, environmentId, databaseId, databaseName)
-		catchError(err)
+		handleError(err)
 
 		fmt.Printf("Qovery database '%s' deployment starting...\n", databaseId)
 		err = qovery.DeployDatabase(qoveryAPIClient, databaseId, environmentId)
-		catchError(err)
+		handleError(err)
 	}
 
 }
