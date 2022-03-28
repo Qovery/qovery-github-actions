@@ -72,6 +72,11 @@ type QoveryAPIClient interface {
 	DeployApplications(environmentId string, applications Applications) error
 	DeployDatabase(database Database) error
 	GetEnvironmentStatus(environmentID string) (*EnvironmentStatus, error)
+	ListOrganizations() ([]Organization, error)
+	ListProjects(organizationId string) ([]Project, error)
+	ListEnvironments(projectId string) ([]Environment, error)
+	ListApplications(environmentId string) ([]Application, error)
+	ListDatabases(environmentId string) ([]Database, error)
 }
 
 type qoveryAPIClient struct {
@@ -169,12 +174,178 @@ func (a qoveryAPIClient) GetEnvironmentStatus(environmentID string) (*Environmen
 		}
 
 		envStatus := NewUnknownEnvironmentStatus(environmentID)
-		json.Unmarshal([]byte(jsonData), &envStatus)
+		err = json.Unmarshal([]byte(jsonData), &envStatus)
+
 		if err != nil {
 			return nil, err
 		}
 
 		return &envStatus, nil
+	default:
+		return nil, fmt.Errorf("qovery API error, status code: %s", resp.Status)
+	}
+}
+
+func (a qoveryAPIClient) ListApplications(environmentId string) ([]Application, error) {
+	req, err := http.NewRequest("GET", a.baseURL+"/environment/"+environmentId+"/application", nil)
+	req.Header.Set("Authorization", "Token "+a.apiToken)
+	req.Header.Set("Content-Type", "application/json")
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := a.c.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	switch resp.StatusCode {
+	case 200:
+		jsonData, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		result := ApplicationResult{}
+		err = json.Unmarshal([]byte(jsonData), &result)
+		if err != nil {
+			return nil, err
+		}
+
+		return result.results, nil
+	default:
+		return nil, fmt.Errorf("qovery API error, status code: %s", resp.Status)
+	}
+}
+
+func (a qoveryAPIClient) ListDatabases(environmentId string) ([]Database, error) {
+	req, err := http.NewRequest("GET", a.baseURL+"/environment/"+environmentId+"/database", nil)
+	req.Header.Set("Authorization", "Token "+a.apiToken)
+	req.Header.Set("Content-Type", "application/json")
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := a.c.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	switch resp.StatusCode {
+	case 200:
+		jsonData, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		result := DatabaseResult{}
+		err = json.Unmarshal([]byte(jsonData), &result)
+		if err != nil {
+			return nil, err
+		}
+
+		return result.results, nil
+	default:
+		return nil, fmt.Errorf("qovery API error, status code: %s", resp.Status)
+	}
+}
+
+func (a qoveryAPIClient) ListEnvironments(projectId string) ([]Environment, error) {
+	req, err := http.NewRequest("GET", a.baseURL+"/project/"+projectId+"/environment", nil)
+	req.Header.Set("Authorization", "Token "+a.apiToken)
+	req.Header.Set("Content-Type", "application/json")
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := a.c.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	switch resp.StatusCode {
+	case 200:
+		jsonData, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		result := EnvironmentResult{}
+		err = json.Unmarshal([]byte(jsonData), &result)
+		if err != nil {
+			return nil, err
+		}
+
+		return result.results, nil
+	default:
+		return nil, fmt.Errorf("qovery API error, status code: %s", resp.Status)
+	}
+}
+
+func (a qoveryAPIClient) ListProjects(organizationId string) ([]Project, error) {
+	req, err := http.NewRequest("GET", a.baseURL+"/organization/"+organizationId+"/project", nil)
+	req.Header.Set("Authorization", "Token "+a.apiToken)
+	req.Header.Set("Content-Type", "application/json")
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := a.c.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	switch resp.StatusCode {
+	case 200:
+		jsonData, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		result := ProjectResult{}
+		err = json.Unmarshal([]byte(jsonData), &result)
+		if err != nil {
+			return nil, err
+		}
+
+		return result.results, nil
+	default:
+		return nil, fmt.Errorf("qovery API error, status code: %s", resp.Status)
+	}
+}
+
+func (a qoveryAPIClient) ListOrganizations() ([]Organization, error) {
+	req, err := http.NewRequest("GET", a.baseURL+"/organization", nil)
+	req.Header.Set("Authorization", "Token "+a.apiToken)
+	req.Header.Set("Content-Type", "application/json")
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := a.c.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	switch resp.StatusCode {
+	case 200:
+		jsonData, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		result := OrganizationResult{}
+		err = json.Unmarshal([]byte(jsonData), &result)
+		if err != nil {
+			return nil, err
+		}
+
+		return result.results, nil
 	default:
 		return nil, fmt.Errorf("qovery API error, status code: %s", resp.Status)
 	}

@@ -47,9 +47,11 @@ jobs:
         uses: Qovery/qovery-action@main
         id: qovery
         with:
-          qovery-organization-id: [YOUR_QOVERY_ORGANIZATION_ID]
-          qovery-environment-id: [APPLICATION_QOVERY_ENVIRONMENT_ID]
-          qovery-application-ids: [APPLICATION_QOVERY_APPLICATION_ID1,APPLICATION_QOVERY_APPLICATION_ID2] # Comma-separated string of IDs
+          qovery-organization-name: [YOUR_QOVERY_ORGANIZATION_NAME (CASE SENSITIVE)]
+          qovery-project-name: [YOUR_QOVERY_PROJECT_NAME (CASE SENSITIVE)]
+          qovery-environment-name: [APPLICATION_QOVERY_ENVIRONMENT_NAME (CASE SENSITIVE)]
+          qovery-application-names: [APPLICATION_QOVERY_APPLICATION_NAME_1,APPLICATION_QOVERY_APPLICATION_NAME_2] # Comma-separated string of names (case sensitive)
+          qovery-application-commit-id: [APPLICATION_QOVERY_APPLICATION_COMMIT_ID]
           qovery-api-token: ${{secrets.QOVERY_API_TOKEN}}
 ```
 
@@ -69,8 +71,9 @@ jobs:
         uses: Qovery/qovery-action@main
         id: qovery
         with:
-          qovery-organization-id: [YOUR_QOVERY_ORGANIZATION_ID]
-          qovery-environment-id: [APPLICATION_QOVERY_ENVIRONMENT_ID]
-          qovery-database-id: [APPLICATION_QOVERY_DATABASE_ID]
+          qovery-organization-name: [YOUR_QOVERY_ORGANIZATION_NAME (CASE SENSITIVE)]
+          qovery-project-name: [YOUR_QOVERY_PROJECT_NAME (CASE SENSITIVE)]
+          qovery-environment-name: [APPLICATION_QOVERY_ENVIRONMENT_NAME (CASE SENSITIVE)]
+          qovery-database-name: [APPLICATION_QOVERY_DATABASE_NAME (CASE SENSITIVE)]
           qovery-api-token: ${{secrets.QOVERY_API_TOKEN}}
 ```

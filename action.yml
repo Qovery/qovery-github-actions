@@ -10,18 +10,30 @@ branding:
 inputs:
   qovery-api-token:
     description: 'Qovery API token'
-    required: true
+    required: false
   qovery-organization-id:
     description: 'Qovery organization ID'
-    required: true
+    required: false
+  qovery-organization-name:
+    description: 'Qovery organization name'
+    required: false
   qovery-environment-id:
     description: 'Qovery environment ID'
-    required: true
+    required: false
+  qovery-environment-name:
+    description: 'Qovery environment name'
+    required: false
   qovery-application-ids:
-    description: 'Qovery applications IDS'
+    description: 'Qovery application IDS'
+    required: false
+  qovery-application-names:
+    description: 'Qovery application names'
     required: false
   qovery-database-id:
     description: 'Qovery database ID'
+    required: false
+  qovery-database-name:
+    description: 'Qovery database name'
     required: false
 outputs:
   environment-state:
@@ -31,8 +43,14 @@ runs:
   image: 'Dockerfile'
   args:
     - --org-id=${{ inputs.qovery-organization-id }}
+    - --org-name=${{ inputs.qovery-organization-name }}
+    - --project-id=${{ inputs.qovery-project-id }}
+    - --project-name=${{ inputs.qovery-project-name }}
     - --env-id=${{ inputs.qovery-environment-id }}
+    - --env-name=${{ inputs.qovery-environment-name }}
     - --app-ids=${{ inputs.qovery-application-ids }}
+    - --app-names=${{ inputs.qovery-application-names }}
     - --app-commit-id=${{ inputs.qovery-application-ids }}
     - --db-id=${{ inputs.qovery-database-id }}
+    - --db-name=${{ inputs.qovery-database-name }}
     - --api-token=${{ inputs.qovery-api-token }}
