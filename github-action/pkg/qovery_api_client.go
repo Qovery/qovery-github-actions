@@ -71,7 +71,7 @@ type HTTPClient interface {
 type QoveryAPIClient interface {
 	DeployApplications(environmentId string, applications Applications) error
 	DeployDatabase(database Database) error
-	GetEnvironmentStatus(environmentID string) (*EnvironmentStatus, error)
+	GetEnvironmentStatus(environmentId string) (*EnvironmentStatus, error)
 	ListOrganizations() ([]Organization, error)
 	ListProjects(organizationId string) ([]Project, error)
 	ListEnvironments(projectId string) ([]Environment, error)
@@ -152,8 +152,8 @@ func (a qoveryAPIClient) DeployDatabase(database Database) error {
 	}
 }
 
-func (a qoveryAPIClient) GetEnvironmentStatus(environmentID string) (*EnvironmentStatus, error) {
-	req, err := http.NewRequest("GET", a.baseURL+"/environment/"+environmentID+"/status", nil)
+func (a qoveryAPIClient) GetEnvironmentStatus(environmentId string) (*EnvironmentStatus, error) {
+	req, err := http.NewRequest("GET", a.baseURL+"/environment/"+environmentId+"/status", nil)
 	req.Header.Set("Authorization", "Token "+a.apiToken)
 	req.Header.Set("Content-Type", "application/json")
 	if err != nil {
@@ -173,8 +173,8 @@ func (a qoveryAPIClient) GetEnvironmentStatus(environmentID string) (*Environmen
 			return nil, err
 		}
 
-		envStatus := NewUnknownEnvironmentStatus(environmentID)
-		err = json.Unmarshal([]byte(jsonData), &envStatus)
+		envStatus := NewUnknownEnvironmentStatus(environmentId)
+		err = json.Unmarshal(jsonData, &envStatus)
 
 		if err != nil {
 			return nil, err
@@ -207,13 +207,13 @@ func (a qoveryAPIClient) ListApplications(environmentId string) ([]Application, 
 			return nil, err
 		}
 
-		result := ApplicationResult{}
-		err = json.Unmarshal([]byte(jsonData), &result)
+		res := ApplicationResult{}
+		err = json.Unmarshal(jsonData, &res)
 		if err != nil {
 			return nil, err
 		}
 
-		return result.results, nil
+		return res.Results, nil
 	default:
 		return nil, fmt.Errorf("qovery API error, status code: %s", resp.Status)
 	}
@@ -240,13 +240,13 @@ func (a qoveryAPIClient) ListDatabases(environmentId string) ([]Database, error)
 			return nil, err
 		}
 
-		result := DatabaseResult{}
-		err = json.Unmarshal([]byte(jsonData), &result)
+		res := DatabaseResult{}
+		err = json.Unmarshal(jsonData, &res)
 		if err != nil {
 			return nil, err
 		}
 
-		return result.results, nil
+		return res.Results, nil
 	default:
 		return nil, fmt.Errorf("qovery API error, status code: %s", resp.Status)
 	}
@@ -273,13 +273,13 @@ func (a qoveryAPIClient) ListEnvironments(projectId string) ([]Environment, erro
 			return nil, err
 		}
 
-		result := EnvironmentResult{}
-		err = json.Unmarshal([]byte(jsonData), &result)
+		res := EnvironmentResult{}
+		err = json.Unmarshal(jsonData, &res)
 		if err != nil {
 			return nil, err
 		}
 
-		return result.results, nil
+		return res.Results, nil
 	default:
 		return nil, fmt.Errorf("qovery API error, status code: %s", resp.Status)
 	}
@@ -306,13 +306,13 @@ func (a qoveryAPIClient) ListProjects(organizationId string) ([]Project, error) 
 			return nil, err
 		}
 
-		result := ProjectResult{}
-		err = json.Unmarshal([]byte(jsonData), &result)
+		res := ProjectResult{}
+		err = json.Unmarshal(jsonData, &res)
 		if err != nil {
 			return nil, err
 		}
 
-		return result.results, nil
+		return res.Results, nil
 	default:
 		return nil, fmt.Errorf("qovery API error, status code: %s", resp.Status)
 	}
@@ -339,13 +339,13 @@ func (a qoveryAPIClient) ListOrganizations() ([]Organization, error) {
 			return nil, err
 		}
 
-		result := OrganizationResult{}
-		err = json.Unmarshal([]byte(jsonData), &result)
+		res := OrganizationResult{}
+		err = json.Unmarshal(jsonData, &res)
 		if err != nil {
 			return nil, err
 		}
 
-		return result.results, nil
+		return res.Results, nil
 	default:
 		return nil, fmt.Errorf("qovery API error, status code: %s", resp.Status)
 	}

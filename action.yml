@@ -26,6 +26,9 @@ inputs:
   qovery-application-ids:
     description: 'Qovery application IDS'
     required: false
+  qovery-application-commit-id:
+    description: 'Qovery app commit id'
+    required: false
   qovery-application-names:
     description: 'Qovery application names'
     required: false
@@ -50,7 +53,7 @@ runs:
     - --env-name=${{ inputs.qovery-environment-name }}
     - --app-ids=${{ inputs.qovery-application-ids }}
     - --app-names=${{ inputs.qovery-application-names }}
-    - --app-commit-id=${{ inputs.qovery-application-ids }}
+    - --app-commit-id=${{ inputs.qovery-application-commit-id }}
     - --db-id=${{ inputs.qovery-database-id }}
     - --db-name=${{ inputs.qovery-database-name }}
     - --api-token=${{ inputs.qovery-api-token }}

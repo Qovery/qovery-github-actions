@@ -6,46 +6,46 @@ type Applications struct {
 }
 
 type Application struct {
-	ID   string
-	Name string
+	ID   string `json:"id"`
+	Name string `json:"name"`
 }
 
 type ApplicationResult struct {
-	results []Application
+	Results []Application `json:results`
 }
 
 type Database struct {
-	ID   string
-	Name string
+	ID   string `json:"id"`
+	Name string `json:"name"`
 }
 
 type DatabaseResult struct {
-	results []Database
+	Results []Database `json:results`
 }
 
 type Environment struct {
-	ID   string
-	Name string
+	ID   string `json:"id"`
+	Name string `json:"name"`
 }
 
 type EnvironmentResult struct {
-	results []Environment
+	Results []Environment `json:results`
 }
 
 type Project struct {
-	ID   string
-	Name string
+	ID   string `json:"id"`
+	Name string `json:"name"`
 }
 
 type ProjectResult struct {
-	results []Project
+	Results []Project `json:results`
 }
 
 type Organization struct {
-	ID   string
-	Name string
+	ID   string `json:"id"`
+	Name string `json:"name"`
 }
 
 type OrganizationResult struct {
-	results []Organization
+	Results []Organization `json:results`
 }
