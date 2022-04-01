@@ -120,7 +120,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	if !deployApp && !deployDb {
+	if !deployApp || !deployDb {
 		fmt.Println("error: 'app-ids' or 'app-names' or 'db-id' or 'db-name' property must be defined.")
 		os.Exit(1)
 	}
