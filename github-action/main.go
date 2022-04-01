@@ -33,7 +33,7 @@ func getOrganizationId(qoveryAPIClient pkg.QoveryAPIClient, id *string, name *st
 		return *id, nil
 	}
 
-	if name != nil && *id != "" {
+	if name != nil && *name != "" {
 		return qovery.GetOrganizationIdByName(qoveryAPIClient, *name)
 	}
 
@@ -45,7 +45,7 @@ func getProjectId(qoveryAPIClient pkg.QoveryAPIClient, orgId string, id *string,
 		return *id, nil
 	}
 
-	if name != nil && *id != "" {
+	if name != nil && *name != "" {
 		return qovery.GetProjectIdByName(qoveryAPIClient, orgId, *name)
 	}
 
@@ -57,7 +57,7 @@ func getEnvironmentId(qoveryAPIClient pkg.QoveryAPIClient, projectId string, id 
 		return *id, nil
 	}
 
-	if name != nil && *id != "" {
+	if name != nil && *name != "" {
 		return qovery.GetEnvironmentIdByName(qoveryAPIClient, projectId, *name)
 	}
 
@@ -69,7 +69,7 @@ func getApplicationIds(qoveryAPIClient pkg.QoveryAPIClient, envId string, id *st
 		return *id, nil
 	}
 
-	if name != nil && *id != "" {
+	if name != nil && *name != "" {
 		var ids []string
 		for _, sName := range strings.Split(*name, ",") {
 			id, err := qovery.GetApplicationIdByName(qoveryAPIClient, envId, sName)
@@ -89,7 +89,7 @@ func getDatabaseId(qoveryAPIClient pkg.QoveryAPIClient, envId string, id *string
 		return *id, nil
 	}
 
-	if name != nil && *id != "" {
+	if name != nil && *name != "" {
 		return qovery.GetDatabaseIdByName(qoveryAPIClient, envId, *name)
 	}
 
