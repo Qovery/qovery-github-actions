@@ -112,8 +112,8 @@ func main() {
 		applicationCommitId = &envCommitID
 	}
 
-	deployApp := applicationIds != nil && *applicationIds != "" && applicationNames != nil && *applicationNames != ""
-	deployDb := databaseId != nil && *databaseId != "" && databaseName != nil && *databaseName != ""
+	deployApp := (applicationIds != nil && *applicationIds != "") || (applicationNames != nil && *applicationNames != "")
+	deployDb := (databaseId != nil && *databaseId != "") || (databaseName != nil && *databaseName != "")
 
 	if deployApp && (applicationCommitId == nil || *applicationCommitId == "") {
 		fmt.Println("error: commit ID shouldn't be empty: `app-commit-id` to be set in args or `GITHUB_SHA` env var to be set.")
