@@ -52,14 +52,14 @@ runs:
   image: 'Dockerfile'
   args:
     - --org-id=${{ inputs.qovery-organization-id }}
-    - --org-name="${{ inputs.qovery-organization-name }}"
+    - --org-name=${{ inputs.qovery-organization-name }}
     - --project-id=${{ inputs.qovery-project-id }}
-    - --project-name="${{ inputs.qovery-project-name }}"
+    - --project-name=${{ inputs.qovery-project-name }}
     - --env-id=${{ inputs.qovery-environment-id }}
-    - --env-name="${{ inputs.qovery-environment-name }}"
+    - --env-name=${{ inputs.qovery-environment-name }}
     - --app-ids=${{ inputs.qovery-application-ids }}
-    - --app-names="${{ inputs.qovery-application-names }}"
+    - --app-names=${{ inputs.qovery-application-names }}
     - --app-commit-id=${{ inputs.qovery-application-commit-id }}
     - --db-id=${{ inputs.qovery-database-id }}
-    - --db-name="${{ inputs.qovery-database-name }}"
+    - --db-name=${{ inputs.qovery-database-name }}
     - --api-token=${{ inputs.qovery-api-token }}
