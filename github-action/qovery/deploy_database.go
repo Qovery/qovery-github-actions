@@ -9,7 +9,7 @@ import (
 )
 
 func DeployDatabase(qoveryAPIClient pkg.QoveryAPIClient, databaseId string, qoveryEnvironmentId string) error {
-	timeout := time.Second * 1800 // 30 minutes
+	timeout := time.Hour * 24 // high timeout we should never reach, API wil timeout before
 
 	// Checking deployment is not QUEUED or DEPLOYING already
 	// if so, wait for it to be ready
@@ -59,7 +59,7 @@ func DeployDatabase(qoveryAPIClient pkg.QoveryAPIClient, databaseId string, qove
 		fmt.Printf("Deployment ongoing: status %s\n", status.State)
 
 		if status.State == pkg.EnvStatusRunning {
-			break
+			return nil // OK
 		} else if strings.HasSuffix(string(status.State), "ERROR") {
 			return fmt.Errorf("error: database has not been deployed, environment status is : %s", status.State)
 		}
@@ -67,5 +67,5 @@ func DeployDatabase(qoveryAPIClient pkg.QoveryAPIClient, databaseId string, qove
 		time.Sleep(10 * time.Second)
 	}
 
-	return nil
+    return fmt.Errorf("error: timeout reached, deployment appears to be still ongoing, please check Qovery console.")
 }
