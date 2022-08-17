@@ -14,6 +14,21 @@ type ApplicationResult struct {
 	Results []Application `json:results`
 }
 
+type ApplicationDeployment struct {
+	ApplicationId string `json:"application_id"`
+	GitCommitId   string `json:"git_commit_id"`
+}
+
+type ContainerDeployment struct {
+	Id       string `json:"id"`
+	ImageTag string `json:"image_tag"`
+}
+
+type ServicesDeployment struct {
+	Applications []ApplicationDeployment `json:"applications"`
+	Containers   []ContainerDeployment   `json:"containers"`
+}
+
 type Database struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`

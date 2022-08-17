@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strings"
 	"time"
 )
 
@@ -69,7 +68,7 @@ type HTTPClient interface {
 }
 
 type QoveryAPIClient interface {
-	DeployApplications(environmentId string, applications Applications) error
+	DeployServices(environmentId string, services ServicesDeployment) error
 	DeployDatabase(database Database) error
 	GetEnvironmentStatus(environmentId string) (*EnvironmentStatus, error)
 	ListOrganizations() ([]Organization, error)
@@ -95,17 +94,10 @@ func NewQoveryAPIClient(c HTTPClient, baseURL string, apiToken string, timeout t
 	}
 }
 
-func (a qoveryAPIClient) DeployApplications(environmentId string, applications Applications) error {
-	appIds := strings.Split(applications.IDS, ",")
-	values := make([]map[string]string, 0, len(appIds))
+func (a qoveryAPIClient) DeployServices(environmentId string, services ServicesDeployment) error {
+	jsonValue, _ := json.Marshal(services)
 
-	for _, appId := range appIds {
-		values = append(values, map[string]string{"git_commit_id": applications.CommitID, "application_id": appId})
-	}
-
-	jsonValue, _ := json.Marshal(map[string]interface{}{"applications": values})
-
-	req, err := http.NewRequest("POST", a.baseURL+"/environment/"+environmentId+"/application/deploy", bytes.NewBuffer(jsonValue))
+	req, err := http.NewRequest("POST", a.baseURL+"/environment/"+environmentId+"/service/deploy", bytes.NewBuffer(jsonValue))
 
 	req.Header.Set("Authorization", "Token "+a.apiToken)
 	req.Header.Set("Content-Type", "application/json")

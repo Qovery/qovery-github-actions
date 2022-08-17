@@ -8,7 +8,7 @@ import (
 	"github-action/pkg"
 )
 
-func DeployApplication(qoveryAPIClient pkg.QoveryAPIClient, qoveryApplicationIds string, qoveryEnvironmentId string, applicationCommitId string) error {
+func DeployServices(qoveryAPIClient pkg.QoveryAPIClient, environmentId string, services pkg.ServicesDeployment) error {
 	timeout := time.Hour * 24 // high timeout we should never reach, API wil timeout before
 
 	// Checking deployment is not QUEUED or DEPLOYING already
@@ -16,7 +16,7 @@ func DeployApplication(qoveryAPIClient pkg.QoveryAPIClient, qoveryApplicationIds
 	stateIsOk := false
 	var status *pkg.EnvironmentStatus
 	for start := time.Now(); time.Since(start) < timeout; {
-		status, err := qoveryAPIClient.GetEnvironmentStatus(qoveryEnvironmentId)
+		status, err := qoveryAPIClient.GetEnvironmentStatus(environmentId)
 		if err != nil {
 			return fmt.Errorf("error while trying to get environment status: %s", err)
 		}
@@ -40,19 +40,18 @@ func DeployApplication(qoveryAPIClient pkg.QoveryAPIClient, qoveryApplicationIds
 
 	// Environment state is not valid even after timeout, cannot deploy the application
 	if !stateIsOk {
-		return fmt.Errorf("error: application cannot be deployed, environment status is : %s", status.State)
+		return fmt.Errorf("error: services cannot be deployed, environment status is : %s", status.State)
 	}
 
 	// Launching deployment
-	// FIXME - CommitID can't be specified for every single app?
-	err := qoveryAPIClient.DeployApplications(qoveryEnvironmentId, pkg.Applications{IDS: qoveryApplicationIds, CommitID: applicationCommitId})
+	err := qoveryAPIClient.DeployServices(environmentId, services)
 	if err != nil {
-		return fmt.Errorf("error while trying to deploy application: %s", err)
+		return fmt.Errorf("error while trying to deploy services: %s", err)
 	}
 
 	// Waiting for deployment to be OK or ERRORED with a timeout
 	for start := time.Now(); time.Since(start) < timeout; {
-		status, err := qoveryAPIClient.GetEnvironmentStatus(qoveryEnvironmentId)
+		status, err := qoveryAPIClient.GetEnvironmentStatus(environmentId)
 		if err != nil {
 			return fmt.Errorf("error while trying to get environment status: %s", err)
 		}
@@ -62,11 +61,11 @@ func DeployApplication(qoveryAPIClient pkg.QoveryAPIClient, qoveryApplicationIds
 		if status.State == pkg.EnvStatusRunning {
 			return nil
 		} else if strings.HasSuffix(string(status.State), "ERROR") {
-			return fmt.Errorf("error: application has not been deployed, environment status is : %s", status.State)
+			return fmt.Errorf("error: services has not been deployed, environment status is : %s", status.State)
 		}
 
 		time.Sleep(10 * time.Second)
 	}
 
-    return fmt.Errorf("error: timeout reached, deployment appears to be still ongoing, please check Qovery console.")
+	return fmt.Errorf("error: timeout reached, deployment appears to be still ongoing, please check Qovery console.")
 }
