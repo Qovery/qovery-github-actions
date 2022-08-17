@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github-action/pkg"
@@ -25,6 +26,8 @@ var (
 	applicationCommitId = kingpin.Flag("app-commit-id", "Application commit ID").String()
 	databaseId          = kingpin.Flag("db-id", "Qovery database ID").String()
 	databaseName        = kingpin.Flag("db-name", "Qovery database name").String()
+	containerIds        = kingpin.Flag("container-ids", "Qovery container ids separated by ,").String()
+	containerImageTags  = kingpin.Flag("container-tags", "Qovery container image tags separated by ,").String()
 	apiToken            = kingpin.Flag("api-token", "Qovery API token").Required().String()
 )
 
@@ -114,14 +117,20 @@ func main() {
 
 	deployApp := (applicationIds != nil && *applicationIds != "") || (applicationNames != nil && *applicationNames != "")
 	deployDb := (databaseId != nil && *databaseId != "") || (databaseName != nil && *databaseName != "")
+	deployContainer := containerIds != nil && *containerIds != ""
 
 	if deployApp && (applicationCommitId == nil || *applicationCommitId == "") {
 		fmt.Println("error: commit ID shouldn't be empty: `app-commit-id` to be set in args or `GITHUB_SHA` env var to be set.")
 		os.Exit(1)
 	}
 
-	if !deployApp && !deployDb {
-		fmt.Println("error: 'app-ids' or 'app-names' or 'db-id' or 'db-name' property must be defined.")
+	if deployContainer && (containerImageTags == nil || *containerImageTags == "") {
+		fmt.Println("error: container-tag shouldn't be empty if you want to deploy a specific container")
+		os.Exit(1)
+	}
+
+	if !deployApp && !deployDb && !deployContainer {
+		fmt.Println("error: 'app-ids' or 'app-names' or 'db-id' or 'db-name' or 'container-ids' property must be defined.")
 		os.Exit(1)
 	}
 
@@ -141,20 +150,58 @@ func main() {
 	environmentId, err := getEnvironmentId(qoveryAPIClient, projectId, environmentId, environmentName)
 	handleError(err)
 
-	if deployApp {
-		applicationIds, err := getApplicationIds(qoveryAPIClient, environmentId, applicationIds, applicationNames)
-		handleError(err)
-
-		fmt.Printf("Qovery application(s) '%s' deployment starting with commit: %s ...\n", applicationIds, *applicationCommitId)
-		err = qovery.DeployApplication(qoveryAPIClient, applicationIds, environmentId, *applicationCommitId)
-		handleError(err)
-	} else if deployDb {
+	if deployDb {
 		databaseId, err := getDatabaseId(qoveryAPIClient, environmentId, databaseId, databaseName)
 		handleError(err)
 
 		fmt.Printf("Qovery database '%s' deployment starting...\n", databaseId)
 		err = qovery.DeployDatabase(qoveryAPIClient, databaseId, environmentId)
 		handleError(err)
+		os.Exit(0)
 	}
 
+	if deployApp {
+		appsIds, err := getApplicationIds(qoveryAPIClient, environmentId, applicationIds, applicationNames)
+		handleError(err)
+		applicationIds = &appsIds
+	}
+
+	ids := strings.Split(*applicationIds, ",")
+	apps := make([]pkg.ApplicationDeployment, 0)
+	for _, id := range ids {
+		if id == "" {
+			continue
+		}
+		apps = append(apps, pkg.ApplicationDeployment{
+			ApplicationId: id,
+			GitCommitId:   *applicationCommitId,
+		})
+	}
+
+	ids = strings.Split(*containerIds, ",")
+	tags := strings.Split(*containerImageTags, ",")
+	if len(ids) != len(tags) {
+		fmt.Println("You don't have the same number of container Ids and image tags.")
+		os.Exit(1)
+	}
+
+	containers := make([]pkg.ContainerDeployment, 0)
+	for ix, id := range ids {
+		if id == "" {
+			continue
+		}
+		containers = append(containers, pkg.ContainerDeployment{
+			Id:       id,
+			ImageTag: tags[ix],
+		})
+	}
+	services := pkg.ServicesDeployment{
+		Applications: apps,
+		Containers:   containers,
+	}
+
+	payload, _ := json.Marshal(services)
+	fmt.Printf("Qovery service deployment starting...\n%s\n", payload)
+	err = qovery.DeployServices(qoveryAPIClient, environmentId, services)
+	handleError(err)
 }
