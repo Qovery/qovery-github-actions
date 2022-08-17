@@ -31,7 +31,7 @@
 ## 🔌 Usage
 - Add a new job to your GitHub workflow (e.q. adding a step after your `tests`) using `Qovery/qovery-action` action.
 
-### Deploy your application
+### Deploy your application or container
 
 ```
 on: [push]
@@ -53,6 +53,8 @@ jobs:
           qovery-application-names: [APPLICATION_QOVERY_APPLICATION_NAME_1,APPLICATION_QOVERY_APPLICATION_NAME_2] # Comma-separated string of names (case sensitive)
           qovery-application-commit-id: [APPLICATION_QOVERY_APPLICATION_COMMIT_ID]
           qovery-api-token: ${{secrets.QOVERY_API_TOKEN}}
+          qovery-container-ids: [CONTAINER_QOVERY_UUID_1, CONTAINER_QOVERY_UUID_2]
+          qovery-container-tags: [CONTAINER_QOVERY_UUID_1_TAG, CONTAINER_QOVERY_UUID_2_TAG]
 ```
 
 ### Deploy a database
