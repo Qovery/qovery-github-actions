@@ -18,7 +18,9 @@ func DeployDatabase(qoveryAPIClient pkg.QoveryAPIClient, databaseId string, qove
 	for start := time.Now(); time.Since(start) < timeout; {
 		status, err := qoveryAPIClient.GetEnvironmentStatus(qoveryEnvironmentId)
 		if err != nil {
-			return fmt.Errorf("error while trying to get environment status: %s", err)
+			fmt.Printf("error while trying to get environment status: %s\n", err)
+			time.Sleep(10 * time.Second)
+			continue
 		}
 
 		// Statuses ok to start a deployment
@@ -67,5 +69,5 @@ func DeployDatabase(qoveryAPIClient pkg.QoveryAPIClient, databaseId string, qove
 		time.Sleep(10 * time.Second)
 	}
 
-    return fmt.Errorf("error: timeout reached, deployment appears to be still ongoing, please check Qovery console.")
+	return fmt.Errorf("error: timeout reached, deployment appears to be still ongoing, please check Qovery console.")
 }

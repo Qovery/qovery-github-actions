@@ -18,7 +18,9 @@ func DeployServices(qoveryAPIClient pkg.QoveryAPIClient, environmentId string, s
 	for start := time.Now(); time.Since(start) < timeout; {
 		status, err := qoveryAPIClient.GetEnvironmentStatus(environmentId)
 		if err != nil {
-			return fmt.Errorf("error while trying to get environment status: %s", err)
+			fmt.Printf("error while trying to get environment status: %s\n", err)
+			time.Sleep(10 * time.Second)
+			continue
 		}
 
 		// Statuses ok to start a deployment
