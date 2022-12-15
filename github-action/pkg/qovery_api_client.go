@@ -10,32 +10,76 @@ import (
 )
 
 type EnvStatus string
+type AppStatus string
+type ContStatus string
 
+// environments states
 const (
-	EnvStatusInitialized      string = "INITIALIZED"
-	EnvStatusBuildingQueued          = "BUILDING_QUEUED"
-	EnvStatusBuilding                = "BUILDING"
-	EnvStatusBuildError              = "BUILD_ERROR"
-	EnvStatusBuilt                   = "BUILT"
-	EnvStatusDeploymentQueued        = "DEPLOYMENT_QUEUED"
-	EnvStatusDeploying               = "DEPLOYING"
-	EnvStatusDeploymentError         = "DEPLOYMENT_ERROR"
-	EnvStatusDeployed                = "DEPLOYED"
-	EnvStatusStopQueued              = "STOP_QUEUED"
-	EnvStatusStopping                = "STOPPING"
-	EnvStatusStopError               = "STOP_ERROR"
-	EnvStatusStopped                 = "STOPPED"
-	EnvStatusDeleteQueued            = "DELETE_QUEUED"
-	EnvStatusDeleting                = "DELETING"
-	EnvStatusDeleteError             = "DELETE_ERROR"
-	EnvStatusDeleted                 = "DELETED"
-	EnvStatusRunning                 = "RUNNING"
-	EnvStatusRunningError            = "RUNNING_ERROR"
-	EnvStatusCancelQueued            = "CANCEL_QUEUED"
-	EnvStatusCancelling              = "CANCELLING"
-	EnvStatusCancelError             = "CANCEL_ERROR"
-	EnvStatusCancelled               = "CANCELLED"
-	EnvStatusUnknown                 = "UNKNOWN"
+	EnvStatusBuilding         = "BUILDING"
+	EnvStatusCancelled        = "CANCELED"
+	EnvStatusCancelling       = "CANCELING"
+	EnvStatusDeleted          = "DELETED"
+	EnvStatusDeleteError      = "DELETE_ERROR"
+	EnvStatusDeleteQueued     = "DELETE_QUEUED"
+	EnvStatusDeleting         = "DELETING"
+	EnvStatusDeployed         = "DEPLOYED"
+	EnvStatusDeploying        = "DEPLOYING"
+	EnvStatusDeploymentError  = "DEPLOYMENT_ERROR"
+	EnvStatusDeploymentQueued = "DEPLOYMENT_QUEUED"
+	EnvStatusQueued           = "QUEUED"
+	EnvStatusReady            = "READY"
+	EnvStatusRunning          = "RUNNING"
+	EnvStatusStopped          = "STOPPED"
+	EnvStatusStopping         = "STOPPING"
+	EnvStatusStopError        = "STOP_ERROR"
+	EnvStatusStopQueued       = "STOP_QUEUED"
+	EnvStatusUnknown          = "UNKNOWN"
+)
+
+// application states
+const (
+	AppStatusBuilding         = "BUILDING"
+	AppStatusCanceled         = "CANCELED"
+	AppStatusCanceling        = "CANCELING"
+	AppStatusDeleted          = "DELETED"
+	AppStatusDeleteError      = "DELETE_ERROR"
+	AppStatusDeleteQueued     = "DELETE_QUEUED"
+	AppStatusDeleting         = "DELETING"
+	AppStatusDeployed         = "DEPLOYED"
+	AppStatusDeploying        = "DEPLOYING"
+	AppStatusDeploymentError  = "DEPLOYMENT_ERROR"
+	AppStatusDeploymentQueued = "DEPLOYMENT_QUEUED"
+	AppStatusQueued           = "QUEUED"
+	AppStatusReady            = "READY"
+	AppStatusRunning          = "RUNNING"
+	AppStatusStopped          = "STOPPED"
+	AppStatusStopping         = "STOPPING"
+	AppStatusStopError        = "STOP_ERROR"
+	AppStatusStopQueued       = "STOP_QUEUED"
+	AppStatusUnknown          = "UNKNOWN"
+)
+
+// container states
+const (
+	ContStatusBuilding         = "BUILDING"
+	ContStatusCanceled         = "CANCELED"
+	ContStatusCanceling        = "CANCELING"
+	ContStatusDeleted          = "DELETED"
+	ContStatusDeleteError      = "DELETE_ERROR"
+	ContStatusDeleteQueued     = "DELETE_QUEUED"
+	ContStatusDeleting         = "DELETING"
+	ContStatusDeployed         = "DEPLOYED"
+	ContStatusDeploying        = "DEPLOYING"
+	ContStatusDeploymentError  = "DEPLOYMENT_ERROR"
+	ContStatusDeploymentQueued = "DEPLOYMENT_QUEUED"
+	ContStatusQueued           = "QUEUED"
+	ContStatusReady            = "READY"
+	ContStatusRunning          = "RUNNING"
+	ContStatusStopped          = "STOPPED"
+	ContStatusStopping         = "STOPPING"
+	ContStatusStopError        = "STOP_ERROR"
+	ContStatusStopQueued       = "STOP_QUEUED"
+	ContStatusUnknown          = "UNKNOWN"
 )
 
 type EnvironmentStatus struct {
@@ -43,6 +87,19 @@ type EnvironmentStatus struct {
 	State                   EnvStatus `json:"state"`
 	Message                 string    `json:"message"`
 	ServiceDeploymentStatus string    `json:"service_deployment_status"`
+}
+type ApplicationStatus struct {
+	ID                      string    `json:"id"`
+	State                   AppStatus `json:"state"`
+	Message                 string    `json:"message"`
+	ServiceDeploymentStatus string    `json:"service_deployment_status"`
+}
+
+type ContainerStatus struct {
+	ID                      string     `json:"id"`
+	State                   ContStatus `json:"state"`
+	Message                 string     `json:"message"`
+	ServiceDeploymentStatus string     `json:"service_deployment_status"`
 }
 
 func NewUnknownEnvironmentStatus(id string) EnvironmentStatus {
@@ -54,12 +111,21 @@ func NewUnknownEnvironmentStatus(id string) EnvironmentStatus {
 	}
 }
 
-func NewEnvironmentStatus(id string, state EnvStatus, message string, serviceDeploymentStatus string) EnvironmentStatus {
-	return EnvironmentStatus{
+func NewUnknownApplicationStatus(id string) ApplicationStatus {
+	return ApplicationStatus{
 		ID:                      id,
-		State:                   state,
-		Message:                 message,
-		ServiceDeploymentStatus: serviceDeploymentStatus,
+		State:                   AppStatusUnknown,
+		Message:                 "",
+		ServiceDeploymentStatus: "",
+	}
+}
+
+func NewUnknownContainerStatus(id string) ContainerStatus {
+	return ContainerStatus{
+		ID:                      id,
+		State:                   ContStatusUnknown,
+		Message:                 "",
+		ServiceDeploymentStatus: "",
 	}
 }
 
@@ -71,6 +137,8 @@ type QoveryAPIClient interface {
 	DeployServices(environmentId string, services ServicesDeployment) error
 	DeployDatabase(database Database) error
 	GetEnvironmentStatus(environmentId string) (*EnvironmentStatus, error)
+	GetApplicationStatus(applicationId string) (*ApplicationStatus, error)
+	GetContainerStatus(containerId string) (*ContainerStatus, error)
 	ListOrganizations() ([]Organization, error)
 	ListProjects(organizationId string) ([]Project, error)
 	ListEnvironments(projectId string) ([]Environment, error)
@@ -173,6 +241,74 @@ func (a qoveryAPIClient) GetEnvironmentStatus(environmentId string) (*Environmen
 		}
 
 		return &envStatus, nil
+	default:
+		return nil, fmt.Errorf("qovery API error, status code: %s", resp.Status)
+	}
+}
+
+func (a qoveryAPIClient) GetContainerStatus(containerId string) (*ContainerStatus, error) {
+	req, err := http.NewRequest("GET", a.baseURL+"/container/"+containerId+"/status", nil)
+	req.Header.Set("Authorization", "Token "+a.apiToken)
+	req.Header.Set("Content-Type", "application/json")
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := a.c.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	switch resp.StatusCode {
+	case 200:
+		jsonData, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		contStatus := NewUnknownContainerStatus(containerId)
+		err = json.Unmarshal(jsonData, &contStatus)
+
+		if err != nil {
+			return nil, err
+		}
+
+		return &contStatus, nil
+	default:
+		return nil, fmt.Errorf("qovery API error, status code: %s", resp.Status)
+	}
+}
+
+func (a qoveryAPIClient) GetApplicationStatus(applicationId string) (*ApplicationStatus, error) {
+	req, err := http.NewRequest("GET", a.baseURL+"/application/"+applicationId+"/status", nil)
+	req.Header.Set("Authorization", "Token "+a.apiToken)
+	req.Header.Set("Content-Type", "application/json")
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := a.c.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	switch resp.StatusCode {
+	case 200:
+		jsonData, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		appStatus := NewUnknownApplicationStatus(applicationId)
+		err = json.Unmarshal(jsonData, &appStatus)
+
+		if err != nil {
+			return nil, err
+		}
+
+		return &appStatus, nil
 	default:
 		return nil, fmt.Errorf("qovery API error, status code: %s", resp.Status)
 	}
