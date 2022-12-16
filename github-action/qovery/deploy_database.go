@@ -27,8 +27,7 @@ func DeployDatabase(qoveryAPIClient pkg.QoveryAPIClient, databaseId string, qove
 		if status.State == pkg.EnvStatusDeploymentError ||
 			status.State == pkg.EnvStatusStopError ||
 			status.State == pkg.EnvStatusRunning ||
-			status.State == pkg.EnvStatusRunningError ||
-			status.State == pkg.EnvStatusCancelError ||
+			status.State == pkg.EnvStatusReady ||
 			status.State == pkg.EnvStatusCancelled ||
 			status.State == pkg.EnvStatusUnknown {
 			stateIsOk = true
@@ -52,22 +51,48 @@ func DeployDatabase(qoveryAPIClient pkg.QoveryAPIClient, databaseId string, qove
 	}
 
 	// Waiting for deployment to be OK or ERRORED with a timeout
+	lastEnvStatus := pkg.EnvStatusUnknown
 	for start := time.Now(); time.Since(start) < timeout; {
 		status, err := qoveryAPIClient.GetEnvironmentStatus(qoveryEnvironmentId)
 		if err != nil {
-			return fmt.Errorf("error while trying to get environment status: %s", err)
+			return fmt.Errorf("⚠️ error while trying to get environment status: %s", err)
 		}
 
 		fmt.Printf("Deployment ongoing: status %s\n", status.State)
+		lastEnvStatus = string(status.State)
 
-		if status.State == pkg.EnvStatusRunning {
-			return nil // OK
-		} else if strings.HasSuffix(string(status.State), "ERROR") {
-			return fmt.Errorf("error: database has not been deployed, environment status is : %s", status.State)
+		if status.State == pkg.EnvStatusRunning || strings.HasSuffix(string(status.State), "ERROR") {
+			break
 		}
 
 		time.Sleep(10 * time.Second)
 	}
 
-	return fmt.Errorf("error: timeout reached, deployment appears to be still ongoing, please check Qovery console.")
+	fmt.Printf("\n####################################\n")
+	fmt.Printf("ENVIRONMENT STATUS: %s\n\n", lastEnvStatus)
+
+	// print database status
+	dbStatus, dbErr := qoveryAPIClient.GetDatabaseStatus(databaseId)
+	if err != nil {
+		return fmt.Errorf("⚠️ Error while trying to get database %s status: %s", databaseId, dbErr)
+	}
+
+	dbSuccessFullyDeployed := true
+	icon := ""
+	if dbStatus.State == pkg.DbStatusRunning {
+		icon = "✅"
+	} else if strings.HasSuffix(string(dbStatus.State), "ERROR") {
+		dbSuccessFullyDeployed = false
+		icon = "❌"
+	} else {
+		dbSuccessFullyDeployed = false
+		icon = "❔"
+	}
+	fmt.Printf("%s Database %s state: %s\n", icon, databaseId, dbStatus.State)
+	fmt.Printf("\n####################################")
+
+	if !dbSuccessFullyDeployed {
+		return fmt.Errorf("error: database have not been deployed successfully")
+	}
+	return nil
 }
