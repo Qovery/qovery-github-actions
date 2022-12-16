@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"time"
 )
@@ -269,7 +269,7 @@ func (a qoveryAPIClient) GetEnvironmentStatus(environmentId string) (*Environmen
 
 	switch resp.StatusCode {
 	case 200:
-		jsonData, err := ioutil.ReadAll(resp.Body)
+		jsonData, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, err
 		}
@@ -303,7 +303,7 @@ func (a qoveryAPIClient) GetContainerStatus(containerId string) (*ContainerStatu
 
 	switch resp.StatusCode {
 	case 200:
-		jsonData, err := ioutil.ReadAll(resp.Body)
+		jsonData, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, err
 		}
@@ -337,7 +337,7 @@ func (a qoveryAPIClient) GetApplicationStatus(applicationId string) (*Applicatio
 
 	switch resp.StatusCode {
 	case 200:
-		jsonData, err := ioutil.ReadAll(resp.Body)
+		jsonData, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, err
 		}
@@ -371,7 +371,7 @@ func (a qoveryAPIClient) GetDatabaseStatus(databseId string) (*DatabaseStatus, e
 
 	switch resp.StatusCode {
 	case 200:
-		jsonData, err := ioutil.ReadAll(resp.Body)
+		jsonData, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, err
 		}
@@ -405,7 +405,7 @@ func (a qoveryAPIClient) ListApplications(environmentId string) ([]Application, 
 
 	switch resp.StatusCode {
 	case 200:
-		jsonData, err := ioutil.ReadAll(resp.Body)
+		jsonData, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, err
 		}
@@ -438,7 +438,7 @@ func (a qoveryAPIClient) ListDatabases(environmentId string) ([]Database, error)
 
 	switch resp.StatusCode {
 	case 200:
-		jsonData, err := ioutil.ReadAll(resp.Body)
+		jsonData, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, err
 		}
@@ -471,7 +471,7 @@ func (a qoveryAPIClient) ListEnvironments(projectId string) ([]Environment, erro
 
 	switch resp.StatusCode {
 	case 200:
-		jsonData, err := ioutil.ReadAll(resp.Body)
+		jsonData, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, err
 		}
@@ -504,7 +504,7 @@ func (a qoveryAPIClient) ListProjects(organizationId string) ([]Project, error) 
 
 	switch resp.StatusCode {
 	case 200:
-		jsonData, err := ioutil.ReadAll(resp.Body)
+		jsonData, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, err
 		}
@@ -537,7 +537,7 @@ func (a qoveryAPIClient) ListOrganizations() ([]Organization, error) {
 
 	switch resp.StatusCode {
 	case 200:
-		jsonData, err := ioutil.ReadAll(resp.Body)
+		jsonData, err := io.ReadAll(resp.Body)
 		if err != nil {
 			return nil, err
 		}

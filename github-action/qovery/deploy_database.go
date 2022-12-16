@@ -74,7 +74,7 @@ func DeployDatabase(qoveryAPIClient pkg.QoveryAPIClient, databaseId string, qove
 	// print database status
 	dbStatus, dbErr := qoveryAPIClient.GetDatabaseStatus(databaseId)
 	if err != nil {
-		fmt.Errorf("⚠️ Error while trying to get database %s status: %s", databaseId, dbErr)
+		return fmt.Errorf("⚠️ Error while trying to get database %s status: %s", databaseId, dbErr)
 	}
 
 	dbSuccessFullyDeployed := true

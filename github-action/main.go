@@ -14,7 +14,6 @@ import (
 )
 
 var (
-	kp                  = kingpin.New("Qovery deploy", "A command-line allowing to deploy Qovery application.")
 	organizationId      = kingpin.Flag("org-id", "Qovery organization ID").String()
 	organizationName    = kingpin.Flag("org-name", "Qovery organization name").String()
 	projectId           = kingpin.Flag("project-id", "Qovery project ID").String()

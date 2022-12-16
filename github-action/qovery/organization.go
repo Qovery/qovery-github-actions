@@ -1,7 +1,6 @@
 package qovery
 
 import (
-	"errors"
 	"fmt"
 	"github-action/pkg"
 )
@@ -18,5 +17,5 @@ func GetOrganizationIdByName(qoveryAPIClient pkg.QoveryAPIClient, name string) (
 		}
 	}
 
-	return "", errors.New(fmt.Sprintf("Can't find organization with name %v! (it's case sensitive)", name))
+	return "", fmt.Errorf("can't find organization with name %v! (it's case sensitive)", name)
 }
