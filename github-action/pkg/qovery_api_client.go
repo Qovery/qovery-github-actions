@@ -12,6 +12,7 @@ import (
 type EnvStatus string
 type AppStatus string
 type ContStatus string
+type DbStatus string
 
 // environments states
 const (
@@ -82,6 +83,29 @@ const (
 	ContStatusUnknown          = "UNKNOWN"
 )
 
+// database states
+const (
+	DbStatusBuilding         = "BUILDING"
+	DbStatusCanceled         = "CANCELED"
+	DbStatusCanceling        = "CANCELING"
+	DbStatusDeleted          = "DELETED"
+	DbStatusDeleteError      = "DELETE_ERROR"
+	DbStatusDeleteQueued     = "DELETE_QUEUED"
+	DbStatusDeleting         = "DELETING"
+	DbStatusDeployed         = "DEPLOYED"
+	DbStatusDeploying        = "DEPLOYING"
+	DbStatusDeploymentError  = "DEPLOYMENT_ERROR"
+	DbStatusDeploymentQueued = "DEPLOYMENT_QUEUED"
+	DbStatusQueued           = "QUEUED"
+	DbStatusReady            = "READY"
+	DbStatusRunning          = "RUNNING"
+	DbStatusStopped          = "STOPPED"
+	DbStatusStopping         = "STOPPING"
+	DbStatusStopError        = "STOP_ERROR"
+	DbStatusStopQueued       = "STOP_QUEUED"
+	DbStatusUnknown          = "UNKNOWN"
+)
+
 type EnvironmentStatus struct {
 	ID                      string    `json:"id"`
 	State                   EnvStatus `json:"state"`
@@ -100,6 +124,13 @@ type ContainerStatus struct {
 	State                   ContStatus `json:"state"`
 	Message                 string     `json:"message"`
 	ServiceDeploymentStatus string     `json:"service_deployment_status"`
+}
+
+type DatabaseStatus struct {
+	ID                      string   `json:"id"`
+	State                   DbStatus `json:"state"`
+	Message                 string   `json:"message"`
+	ServiceDeploymentStatus string   `json:"service_deployment_status"`
 }
 
 func NewUnknownEnvironmentStatus(id string) EnvironmentStatus {
@@ -129,6 +160,15 @@ func NewUnknownContainerStatus(id string) ContainerStatus {
 	}
 }
 
+func NewUnknownDatabaseStatus(id string) DatabaseStatus {
+	return DatabaseStatus{
+		ID:                      id,
+		State:                   DbStatusUnknown,
+		Message:                 "",
+		ServiceDeploymentStatus: "",
+	}
+}
+
 type HTTPClient interface {
 	Do(*http.Request) (*http.Response, error)
 }
@@ -139,6 +179,7 @@ type QoveryAPIClient interface {
 	GetEnvironmentStatus(environmentId string) (*EnvironmentStatus, error)
 	GetApplicationStatus(applicationId string) (*ApplicationStatus, error)
 	GetContainerStatus(containerId string) (*ContainerStatus, error)
+	GetDatabaseStatus(databaseId string) (*DatabaseStatus, error)
 	ListOrganizations() ([]Organization, error)
 	ListProjects(organizationId string) ([]Project, error)
 	ListEnvironments(projectId string) ([]Environment, error)
@@ -309,6 +350,40 @@ func (a qoveryAPIClient) GetApplicationStatus(applicationId string) (*Applicatio
 		}
 
 		return &appStatus, nil
+	default:
+		return nil, fmt.Errorf("qovery API error, status code: %s", resp.Status)
+	}
+}
+
+func (a qoveryAPIClient) GetDatabaseStatus(databseId string) (*DatabaseStatus, error) {
+	req, err := http.NewRequest("GET", a.baseURL+"/database/"+databseId+"/status", nil)
+	req.Header.Set("Authorization", "Token "+a.apiToken)
+	req.Header.Set("Content-Type", "application/json")
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := a.c.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	switch resp.StatusCode {
+	case 200:
+		jsonData, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		dbStatus := NewUnknownDatabaseStatus(databseId)
+		err = json.Unmarshal(jsonData, &dbStatus)
+
+		if err != nil {
+			return nil, err
+		}
+
+		return &dbStatus, nil
 	default:
 		return nil, fmt.Errorf("qovery API error, status code: %s", resp.Status)
 	}
