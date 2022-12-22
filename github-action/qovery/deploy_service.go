@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github-action/pkg"
-	"golang.org/x/exp/slices"
 )
 
 func DeployServices(qoveryAPIClient pkg.QoveryAPIClient, environmentId string, services pkg.ServicesDeployment) error {
@@ -85,10 +84,7 @@ func DeployServices(qoveryAPIClient pkg.QoveryAPIClient, environmentId string, s
 			icon = "✅"
 		} else if strings.HasSuffix(string(status.State), "ERROR") {
 			icon = "❌"
-			idx := slices.IndexFunc(services.Applications, func(a pkg.ApplicationDeployment) bool { return a.ApplicationId == app.ApplicationId })
-			if idx != -1 {
-				appSuccessFullyDeployed = false
-			}
+			appSuccessFullyDeployed = false
 		} else {
 			icon = "❔"
 		}
@@ -108,10 +104,7 @@ func DeployServices(qoveryAPIClient pkg.QoveryAPIClient, environmentId string, s
 			icon = "✅"
 		} else if strings.HasSuffix(string(status.State), "ERROR") {
 			icon = "❌"
-			idx := slices.IndexFunc(services.Containers, func(a pkg.ContainerDeployment) bool { return a.Id == cont.Id })
-			if idx != -1 {
-				containerSuccessFullyDeployed = false
-			}
+			containerSuccessFullyDeployed = false
 		} else {
 			icon = "❔"
 		}
