@@ -1,4 +1,4 @@
-FROM golang:1.17.1-buster as build
+FROM golang:1.19.1-buster as build
 
 ADD ./github-action /github-action
 WORKDIR /github-action
