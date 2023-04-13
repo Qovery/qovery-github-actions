@@ -27,6 +27,7 @@ func DeployServices(qoveryAPIClient pkg.QoveryAPIClient, environmentId string, s
 		if status.State == pkg.EnvStatusDeploymentError ||
 			status.State == pkg.EnvStatusStopError ||
 			status.State == pkg.EnvStatusRunning ||
+			status.State == pkg.EnvStatusDeployed ||
 			status.State == pkg.EnvStatusReady ||
 			status.State == pkg.EnvStatusCancelled ||
 			status.State == pkg.EnvStatusUnknown {
@@ -61,7 +62,7 @@ func DeployServices(qoveryAPIClient pkg.QoveryAPIClient, environmentId string, s
 		fmt.Printf("Deployment ongoing: status %s\n", status.State)
 		lastEnvStatus = string(status.State)
 
-		if status.State == pkg.EnvStatusRunning || strings.HasSuffix(string(status.State), "ERROR") {
+		if status.State == pkg.EnvStatusRunning || status.State == pkg.EnvStatusDeployed || strings.HasSuffix(string(status.State), "ERROR") {
 			break
 		}
 
@@ -80,7 +81,7 @@ func DeployServices(qoveryAPIClient pkg.QoveryAPIClient, environmentId string, s
 		}
 
 		icon := ""
-		if status.State == pkg.AppStatusRunning {
+		if status.State == pkg.AppStatusRunning || status.State == pkg.AppStatusDeployed {
 			icon = "✅"
 		} else if strings.HasSuffix(string(status.State), "ERROR") {
 			icon = "❌"
@@ -100,7 +101,7 @@ func DeployServices(qoveryAPIClient pkg.QoveryAPIClient, environmentId string, s
 		}
 
 		icon := ""
-		if status.State == pkg.AppStatusRunning {
+		if status.State == pkg.AppStatusRunning || status.State == pkg.AppStatusDeployed {
 			icon = "✅"
 		} else if strings.HasSuffix(string(status.State), "ERROR") {
 			icon = "❌"
