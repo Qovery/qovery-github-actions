@@ -109,27 +109,23 @@ const (
 type EnvironmentStatus struct {
 	ID                      string    `json:"id"`
 	State                   EnvStatus `json:"state"`
-	Message                 string    `json:"message"`
 	ServiceDeploymentStatus string    `json:"service_deployment_status"`
 }
 type ApplicationStatus struct {
 	ID                      string    `json:"id"`
 	State                   AppStatus `json:"state"`
-	Message                 string    `json:"message"`
 	ServiceDeploymentStatus string    `json:"service_deployment_status"`
 }
 
 type ContainerStatus struct {
 	ID                      string     `json:"id"`
 	State                   ContStatus `json:"state"`
-	Message                 string     `json:"message"`
 	ServiceDeploymentStatus string     `json:"service_deployment_status"`
 }
 
 type DatabaseStatus struct {
 	ID                      string   `json:"id"`
 	State                   DbStatus `json:"state"`
-	Message                 string   `json:"message"`
 	ServiceDeploymentStatus string   `json:"service_deployment_status"`
 }
 
@@ -137,7 +133,6 @@ func NewUnknownEnvironmentStatus(id string) EnvironmentStatus {
 	return EnvironmentStatus{
 		ID:                      id,
 		State:                   EnvStatusUnknown,
-		Message:                 "",
 		ServiceDeploymentStatus: "",
 	}
 }
@@ -146,7 +141,6 @@ func NewUnknownApplicationStatus(id string) ApplicationStatus {
 	return ApplicationStatus{
 		ID:                      id,
 		State:                   AppStatusUnknown,
-		Message:                 "",
 		ServiceDeploymentStatus: "",
 	}
 }
@@ -155,7 +149,6 @@ func NewUnknownContainerStatus(id string) ContainerStatus {
 	return ContainerStatus{
 		ID:                      id,
 		State:                   ContStatusUnknown,
-		Message:                 "",
 		ServiceDeploymentStatus: "",
 	}
 }
@@ -164,7 +157,6 @@ func NewUnknownDatabaseStatus(id string) DatabaseStatus {
 	return DatabaseStatus{
 		ID:                      id,
 		State:                   DbStatusUnknown,
-		Message:                 "",
 		ServiceDeploymentStatus: "",
 	}
 }
