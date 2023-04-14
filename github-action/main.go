@@ -10,7 +10,7 @@ import (
 	"os"
 	"strings"
 
-	"gopkg.in/alecthomas/kingpin.v2"
+	kingpin "gopkg.in/alecthomas/kingpin.v2"
 )
 
 var (
@@ -29,6 +29,17 @@ var (
 	containerImageTags  = kingpin.Flag("container-tags", "Qovery container image tags separated by ,").String()
 	apiToken            = kingpin.Flag("api-token", "Qovery API token").Required().String()
 )
+
+func sanitizeInputIDsList(ids string) string {
+	// remove any whitespaces provided eventually in list inputs
+	// example: `\n id, id \n` => `id,id`
+	var sanitized []string
+	for _, id := range strings.Split(ids, ",") {
+		sanitized = append(sanitized, strings.TrimSpace(id))
+	}
+
+	return strings.TrimSpace(strings.Join(sanitized, ","))
+}
 
 func getOrganizationId(qoveryAPIClient pkg.QoveryAPIClient, id *string, name *string) (string, error) {
 	if id != nil && *id != "" {
@@ -68,7 +79,7 @@ func getEnvironmentId(qoveryAPIClient pkg.QoveryAPIClient, projectId string, id 
 
 func getApplicationIds(qoveryAPIClient pkg.QoveryAPIClient, envId string, id *string, name *string) (string, error) {
 	if id != nil && *id != "" {
-		return *id, nil
+		return sanitizeInputIDsList(*id), nil
 	}
 
 	if name != nil && *name != "" {
@@ -177,7 +188,7 @@ func main() {
 		})
 	}
 
-	ids = strings.Split(*containerIds, ",")
+	ids = strings.Split(sanitizeInputIDsList(*containerIds), ",")
 	tags := strings.Split(*containerImageTags, ",")
 	if len(ids) != len(tags) {
 		fmt.Println("You don't have the same number of container Ids and image tags.")
