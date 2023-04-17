@@ -26,10 +26,12 @@ func DeployDatabase(qoveryAPIClient pkg.QoveryAPIClient, databaseId string, qove
 		// Statuses ok to start a deployment
 		if status.State == pkg.EnvStatusDeploymentError ||
 			status.State == pkg.EnvStatusStopError ||
-			status.State == pkg.EnvStatusRunning ||
-      status.State == pkg.EnvStatusDeployed ||
+			status.State == pkg.EnvStatusDeployed ||
 			status.State == pkg.EnvStatusReady ||
+			status.State == pkg.EnvStatusBuildError ||
 			status.State == pkg.EnvStatusCancelled ||
+			status.State == pkg.EnvStatusRestarted ||
+			status.State == pkg.EnvStatusRestartError ||
 			status.State == pkg.EnvStatusUnknown {
 			stateIsOk = true
 			break
@@ -62,7 +64,7 @@ func DeployDatabase(qoveryAPIClient pkg.QoveryAPIClient, databaseId string, qove
 		fmt.Printf("Deployment ongoing: status %s\n", status.State)
 		lastEnvStatus = string(status.State)
 
-		if status.State == pkg.EnvStatusRunning || status.State == pkg.EnvStatusDeployed || strings.HasSuffix(string(status.State), "ERROR") {
+		if status.State == pkg.EnvStatusDeployed || strings.HasSuffix(string(status.State), "ERROR") {
 			break
 		}
 
@@ -80,7 +82,7 @@ func DeployDatabase(qoveryAPIClient pkg.QoveryAPIClient, databaseId string, qove
 
 	dbSuccessFullyDeployed := true
 	icon := ""
-	if dbStatus.State == pkg.DbStatusRunning || status.State == pkg.DbStatusDeployed {
+	if status.State == pkg.DbStatusDeployed {
 		icon = "✅"
 	} else if strings.HasSuffix(string(dbStatus.State), "ERROR") {
 		dbSuccessFullyDeployed = false
