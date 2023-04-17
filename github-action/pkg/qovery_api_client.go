@@ -184,6 +184,7 @@ type QoveryAPIClient interface {
 	ListProjects(organizationId string) ([]Project, error)
 	ListEnvironments(projectId string) ([]Environment, error)
 	ListApplications(environmentId string) ([]Application, error)
+	ListContainers(environmentId string) ([]Container, error)
 	ListDatabases(environmentId string) ([]Database, error)
 }
 
@@ -411,6 +412,39 @@ func (a qoveryAPIClient) ListApplications(environmentId string) ([]Application, 
 		}
 
 		res := ApplicationResult{}
+		err = json.Unmarshal(jsonData, &res)
+		if err != nil {
+			return nil, err
+		}
+
+		return res.Results, nil
+	default:
+		return nil, fmt.Errorf("qovery API error, status code: %s", resp.Status)
+	}
+}
+
+func (a qoveryAPIClient) ListContainers(environmentId string) ([]Container, error) {
+	req, err := http.NewRequest("GET", a.baseURL+"/environment/"+environmentId+"/container", nil)
+	req.Header.Set("Authorization", "Token "+a.apiToken)
+	req.Header.Set("Content-Type", "application/json")
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := a.c.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	switch resp.StatusCode {
+	case 200:
+		jsonData, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		res := ContainerResult{}
 		err = json.Unmarshal(jsonData, &res)
 		if err != nil {
 			return nil, err

@@ -11,12 +11,21 @@ type Application struct {
 }
 
 type ApplicationResult struct {
-	Results []Application `json:results`
+	Results []Application `json:"results"`
 }
 
 type ApplicationDeployment struct {
 	ApplicationId string `json:"application_id"`
 	GitCommitId   string `json:"git_commit_id"`
+}
+
+type ContainerResult struct {
+	Results []Container `json:"results"`
+}
+
+type Container struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
 }
 
 type ContainerDeployment struct {
@@ -35,7 +44,7 @@ type Database struct {
 }
 
 type DatabaseResult struct {
-	Results []Database `json:results`
+	Results []Database `json:"results"`
 }
 
 type Environment struct {
@@ -44,7 +53,7 @@ type Environment struct {
 }
 
 type EnvironmentResult struct {
-	Results []Environment `json:results`
+	Results []Environment `json:"results"`
 }
 
 type Project struct {
@@ -53,7 +62,7 @@ type Project struct {
 }
 
 type ProjectResult struct {
-	Results []Project `json:results`
+	Results []Project `json:"results"`
 }
 
 type Organization struct {
@@ -62,5 +71,5 @@ type Organization struct {
 }
 
 type OrganizationResult struct {
-	Results []Organization `json:results`
+	Results []Organization `json:"results"`
 }
