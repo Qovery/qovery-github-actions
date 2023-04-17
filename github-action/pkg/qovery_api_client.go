@@ -17,6 +17,7 @@ type DbStatus string
 // environments states
 const (
 	EnvStatusBuilding         = "BUILDING"
+	EnvStatusBuildError       = "BUILD_ERROR"
 	EnvStatusCancelled        = "CANCELED"
 	EnvStatusCancelling       = "CANCELING"
 	EnvStatusDeleted          = "DELETED"
@@ -29,17 +30,19 @@ const (
 	EnvStatusDeploymentQueued = "DEPLOYMENT_QUEUED"
 	EnvStatusQueued           = "QUEUED"
 	EnvStatusReady            = "READY"
-	EnvStatusRunning          = "RUNNING"
 	EnvStatusStopped          = "STOPPED"
 	EnvStatusStopping         = "STOPPING"
 	EnvStatusStopError        = "STOP_ERROR"
 	EnvStatusStopQueued       = "STOP_QUEUED"
+	EnvStatusRestarted        = "RESTARTED"
+	EnvStatusRestartError     = "RESTART_ERROR"
 	EnvStatusUnknown          = "UNKNOWN"
 )
 
 // application states
 const (
 	AppStatusBuilding         = "BUILDING"
+	AppStatusBuildError       = "BUILD_ERROR"
 	AppStatusCanceled         = "CANCELED"
 	AppStatusCanceling        = "CANCELING"
 	AppStatusDeleted          = "DELETED"
@@ -52,17 +55,19 @@ const (
 	AppStatusDeploymentQueued = "DEPLOYMENT_QUEUED"
 	AppStatusQueued           = "QUEUED"
 	AppStatusReady            = "READY"
-	AppStatusRunning          = "RUNNING"
 	AppStatusStopped          = "STOPPED"
 	AppStatusStopping         = "STOPPING"
 	AppStatusStopError        = "STOP_ERROR"
 	AppStatusStopQueued       = "STOP_QUEUED"
+	AppStatusRestarted        = "RESTARTED"
+	AppStatusRestartError     = "RESTART_ERROR"
 	AppStatusUnknown          = "UNKNOWN"
 )
 
 // container states
 const (
 	ContStatusBuilding         = "BUILDING"
+	ContStatusBuildError       = "BUILD_ERROR"
 	ContStatusCanceled         = "CANCELED"
 	ContStatusCanceling        = "CANCELING"
 	ContStatusDeleted          = "DELETED"
@@ -75,17 +80,19 @@ const (
 	ContStatusDeploymentQueued = "DEPLOYMENT_QUEUED"
 	ContStatusQueued           = "QUEUED"
 	ContStatusReady            = "READY"
-	ContStatusRunning          = "RUNNING"
 	ContStatusStopped          = "STOPPED"
 	ContStatusStopping         = "STOPPING"
 	ContStatusStopError        = "STOP_ERROR"
 	ContStatusStopQueued       = "STOP_QUEUED"
+	ContStatusRestarted        = "RESTARTED"
+	ContStatusRestartError     = "RESTART_ERROR"
 	ContStatusUnknown          = "UNKNOWN"
 )
 
 // database states
 const (
 	DbStatusBuilding         = "BUILDING"
+	DbStatusBuildError       = "BUILD_ERROR"
 	DbStatusCanceled         = "CANCELED"
 	DbStatusCanceling        = "CANCELING"
 	DbStatusDeleted          = "DELETED"
@@ -98,11 +105,12 @@ const (
 	DbStatusDeploymentQueued = "DEPLOYMENT_QUEUED"
 	DbStatusQueued           = "QUEUED"
 	DbStatusReady            = "READY"
-	DbStatusRunning          = "RUNNING"
 	DbStatusStopped          = "STOPPED"
 	DbStatusStopping         = "STOPPING"
 	DbStatusStopError        = "STOP_ERROR"
 	DbStatusStopQueued       = "STOP_QUEUED"
+	DbStatusRestarted        = "RESTARTED"
+	DbtStatusRestartError    = "RESTART_ERROR"
 	DbStatusUnknown          = "UNKNOWN"
 )
 
