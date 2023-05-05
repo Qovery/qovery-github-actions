@@ -105,7 +105,7 @@ func getContainerIds(qoveryAPIClient pkg.QoveryAPIClient, envId string, id *stri
 
 	if name != nil && *name != "" {
 		var ids []string
-		for _, sName := range strings.Split(*name, ",") {
+		for _, sName := range strings.Split(sanitizeInputIDsList(*name), ",") {
 			id, err := qovery.GetContainerIdByName(qoveryAPIClient, envId, sName)
 			handleError(err)
 
