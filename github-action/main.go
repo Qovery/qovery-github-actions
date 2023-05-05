@@ -26,6 +26,7 @@ var (
 	databaseId          = kingpin.Flag("db-id", "Qovery database ID").String()
 	databaseName        = kingpin.Flag("db-name", "Qovery database name").String()
 	containerIds        = kingpin.Flag("container-ids", "Qovery container ids separated by ,").String()
+	containerNames      = kingpin.Flag("container-names", "Qovery container name(s)").String()
 	containerImageTags  = kingpin.Flag("container-tags", "Qovery container image tags separated by ,").String()
 	apiToken            = kingpin.Flag("api-token", "Qovery API token").Required().String()
 )
@@ -97,6 +98,26 @@ func getApplicationIds(qoveryAPIClient pkg.QoveryAPIClient, envId string, id *st
 	return "", errors.New("'app-ids' or 'app-names' property must be defined")
 }
 
+func getContainerIds(qoveryAPIClient pkg.QoveryAPIClient, envId string, id *string, name *string) (string, error) {
+	if id != nil && *id != "" {
+		return sanitizeInputIDsList(*id), nil
+	}
+
+	if name != nil && *name != "" {
+		var ids []string
+		for _, sName := range strings.Split(sanitizeInputIDsList(*name), ",") {
+			id, err := qovery.GetContainerIdByName(qoveryAPIClient, envId, sName)
+			handleError(err)
+
+			ids = append(ids, id)
+		}
+
+		return strings.Join(ids, ","), nil
+	}
+
+	return "", errors.New("'container-ids' or 'container-names' property must be defined")
+}
+
 func getDatabaseId(qoveryAPIClient pkg.QoveryAPIClient, envId string, id *string, name *string) (string, error) {
 	if id != nil && *id != "" {
 		return *id, nil
@@ -127,7 +148,7 @@ func main() {
 
 	deployApp := (applicationIds != nil && *applicationIds != "") || (applicationNames != nil && *applicationNames != "")
 	deployDb := (databaseId != nil && *databaseId != "") || (databaseName != nil && *databaseName != "")
-	deployContainer := containerIds != nil && *containerIds != ""
+	deployContainer := (containerIds != nil && *containerIds != "") || (containerNames != nil && *containerNames != "")
 
 	if deployApp && (applicationCommitId == nil || *applicationCommitId == "") {
 		fmt.Println("error: commit ID shouldn't be empty: `app-commit-id` to be set in args or `GITHUB_SHA` env var to be set.")
@@ -186,6 +207,12 @@ func main() {
 			ApplicationId: id,
 			GitCommitId:   *applicationCommitId,
 		})
+	}
+
+	if deployContainer {
+		contIds, err := getContainerIds(qoveryAPIClient, environmentId, containerIds, containerNames)
+		handleError(err)
+		containerIds = &contIds
 	}
 
 	ids = strings.Split(sanitizeInputIDsList(*containerIds), ",")

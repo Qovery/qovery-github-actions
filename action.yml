@@ -47,6 +47,9 @@ inputs:
   qovery-container-ids:
     description: 'Qovery container IDs, separated by `,`'
     required: false
+  qovery-container-names:
+    description: 'Qovery container names, separated by `,`'
+    required: false
   qovery-container-tags:
     description: 'Qovery container tags, separated by `,`'
     required: false
@@ -69,5 +72,6 @@ runs:
     - --db-id=${{ inputs.qovery-database-id }}
     - --db-name=${{ inputs.qovery-database-name }}
     - --container-ids=${{ inputs.qovery-container-ids }}
+    - --container-names=${{ inputs.qovery-container-names }}
     - --container-tags=${{ inputs.qovery-container-tags }}
     - --api-token=${{ inputs.qovery-api-token }}
